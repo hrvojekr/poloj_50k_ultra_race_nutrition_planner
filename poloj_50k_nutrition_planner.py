@@ -2,13 +2,16 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
-st.title("50k Poloj Ultra Race Nutrition Planner")
+
+st.title("50k Ultra Poloj Race Nutrition Planner")
+
 
 st.sidebar.header("User Inputs")
-pace_min = st.sidebar.number_input("Pace (minutes per km)", min_value=3.0, max_value=10.0, value=4.0, step=0.1)
-pace_sec = st.sidebar.number_input("Additional seconds per km", min_value=0, max_value=59, value=14)
-fluid_per_hour_ml = st.sidebar.number_input("Fluid intake per hour (ml)", min_value=100.0, max_value=2000.0, value=500.0, step=10.0)
-carbs_per_hour_g = st.sidebar.number_input("Carb intake per hour (g)", min_value=10.0, max_value=200.0, value=67.5, step=1.0)
+pace_min = st.sidebar.number_input("Pace (minutes per km)", min_value=1, max_value=10, value=4, step=1)
+pace_sec = st.sidebar.number_input("Additional seconds per km", min_value=0, max_value=59, value=14, step=1)
+fluid_per_hour_ml = st.sidebar.number_input("Fluid intake per hour (ml)", min_value=100, max_value=2000, value=500, step=1)
+carbs_per_hour_g = st.sidebar.number_input("Carb intake per hour (g)", min_value=10, max_value=200, value=67, step=1)
+
 
 pace_per_km = pace_min + (pace_sec / 60)
 
@@ -25,10 +28,13 @@ data = []
 for i, lap_dist in enumerate(lap_distances_km):
     lap_time = lap_dist * pace_per_km  
     total_time += lap_time  
-    lap_timestamp = start_time + timedelta(minutes=total_time) 
+    lap_timestamp = start_time + timedelta(minutes=total_time)  
     elapsed_time = timedelta(minutes=total_time)  
+
+   
     elapsed_time_str = str(elapsed_time).split(".")[0]
 
+    
     fluid_intake = fluid_per_hour_ml * (lap_time / 60) if i > 0 else 0
     carbs_intake = carbs_per_hour_g * (lap_time / 60) if i > 0 else 0
     
@@ -38,9 +44,8 @@ for i, lap_dist in enumerate(lap_distances_km):
     data.append([
         i + 1,
         round(sum(lap_distances_km[: i + 1]), 2),
-        elapsed_time_str, 
+        elapsed_time_str,  
         lap_timestamp.strftime("%H:%M:%S"),  
-        round(fluid_intake, 1),
         round(cumulative_fluid, 1),
         round(carbs_intake, 1),
         round(cumulative_carbs, 1)
