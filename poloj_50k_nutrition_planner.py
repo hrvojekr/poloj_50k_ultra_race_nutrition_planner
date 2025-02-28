@@ -45,6 +45,7 @@ for i, lap_dist in enumerate(lap_distances_km):
         i + 1,
         round(sum(lap_distances_km[: i + 1]), 2),
         elapsed_time_str,  
+        round(fluid_intake, 1),
         lap_timestamp.strftime("%H:%M:%S"),  
         round(cumulative_fluid, 1),
         round(carbs_intake, 1),
