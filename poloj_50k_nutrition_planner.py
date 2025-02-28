@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
-
 st.title("50k Ultra Poloj Race Nutrition Planner")
-
 
 st.sidebar.header("User Inputs")
 pace_min = st.sidebar.number_input("Pace (minutes per km)", min_value=1, max_value=10, value=4, step=1)
@@ -12,28 +10,26 @@ pace_sec = st.sidebar.number_input("Additional seconds per km", min_value=0, max
 fluid_per_hour_ml = st.sidebar.number_input("Fluid intake per hour (ml)", min_value=100, max_value=2000, value=500, step=1)
 carbs_per_hour_g = st.sidebar.number_input("Carb intake per hour (g)", min_value=10, max_value=200, value=67, step=1)
 
-
 pace_per_km = pace_min + (pace_sec / 60)
 
 lap_distances_km = [1.5834] + [4.84166] * 10  
 start_time = datetime(2025, 3, 1, 8, 0)  
-
 
 total_time = 0  
 cumulative_fluid = 0
 cumulative_carbs = 0
 data = []
 
+total_distance = 0
 
 for i, lap_dist in enumerate(lap_distances_km):
     lap_time = lap_dist * pace_per_km  
     total_time += lap_time  
     lap_timestamp = start_time + timedelta(minutes=total_time)  
     elapsed_time = timedelta(minutes=total_time)  
-
-   
+    
+    total_distance += lap_dist
     elapsed_time_str = str(elapsed_time).split(".")[0]
-
     
     fluid_intake = fluid_per_hour_ml * (lap_time / 60) if i > 0 else 0
     carbs_intake = carbs_per_hour_g * (lap_time / 60) if i > 0 else 0
@@ -43,7 +39,7 @@ for i, lap_dist in enumerate(lap_distances_km):
     
     data.append([
         i + 1,
-        round(sum(lap_distances_km[: i + 1]), 2),
+        round(total_distance, 2),
         elapsed_time_str,  
         lap_timestamp.strftime("%H:%M:%S"),
         round(fluid_intake, 1),
@@ -52,10 +48,21 @@ for i, lap_dist in enumerate(lap_distances_km):
         round(cumulative_carbs, 1)
     ])
 
-
 df = pd.DataFrame(data, columns=["Lap", "Total Distance (km)", "Elapsed Time", "Time", 
                                  "Fluid Intake (ml)", "Cumulative Fluid (ml)", 
                                  "Carbs Intake (g)", "Cumulative Carbs (g)"])
 
 st.write("### Race Nutrition Plan")
 st.dataframe(df)
+
+# Add explanation
+st.write("""
+### Note on Pace Changes
+Changing the pace (minutes and seconds per km) will update the 'Elapsed Time' and 'Time' columns, 
+as well as the nutrition intake calculations. The 'Total Distance (km)' remains constant as it's 
+based on the predefined lap distances.
+""")
+
+# Display total race time
+total_race_time = str(timedelta(minutes=total_time)).split(".")[0]
+st.write(f"### Total Race Time: {total_race_time}")
