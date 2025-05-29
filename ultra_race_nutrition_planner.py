@@ -38,10 +38,13 @@ sodium_per_hour_mg = st.sidebar.number_input(
     "Sodium intake per hour (mg)", min_value=100, max_value=2000, value=400, step=1,
     help="Recommended: 300–600 mg per hour"
 )
+calories_per_hour_kcal = st.sidebar.number_input(
+    "Calories intake per hour (kcal)", min_value=100, max_value=2000, value=300, step=10,
+    help="Recommended: around 300 kcal per hour"
+)
 
 pace_per_km = pace_min + (pace_sec / 60)
 lap_time_min = lap_distance_km * pace_per_km  # Time per full lap
-
 
 lap_distances_km = []
 total_time = 0
@@ -66,10 +69,10 @@ elif discipline in ["6h", "12h"]:
         partial_distance = (remaining_time / pace_per_km)
         lap_distances_km.append(partial_distance)
 
-
 cumulative_fluid = 0
 cumulative_carbs = 0
 cumulative_sodium = 0
+cumulative_calories = 0
 data = []
 total_distance = 0
 
@@ -86,10 +89,12 @@ for i, lap_dist in enumerate(lap_distances_km):
     fluid_intake = fluid_per_hour_ml * (lap_time / 60) if i > 0 else 0
     carbs_intake = carbs_per_hour_g * (lap_time / 60) if i > 0 else 0
     sodium_intake = sodium_per_hour_mg * (lap_time / 60) if i > 0 else 0
+    calories_intake = calories_per_hour_kcal * (lap_time / 60) if i > 0 else 0
     
     cumulative_fluid += fluid_intake
     cumulative_carbs += carbs_intake
     cumulative_sodium += sodium_intake
+    cumulative_calories += calories_intake
 
     data.append([
         i + 1,
@@ -102,6 +107,8 @@ for i, lap_dist in enumerate(lap_distances_km):
         round(cumulative_carbs, 1),
         round(sodium_intake, 1),
         round(cumulative_sodium, 1),
+        round(calories_intake, 1),
+        round(cumulative_calories, 1),
         ""  # Empty notes field for user input
     ])
 
@@ -116,9 +123,9 @@ df = pd.DataFrame(data, columns=[
     "Fluid Intake (ml)", "Cumulative Fluid (ml)", 
     "Carbs Intake (g)", "Cumulative Carbs (g)",
     "Sodium Intake (mg)", "Cumulative Sodium (mg)",
+    "Calories Intake (kcal)", "Cumulative Calories (kcal)",
     "Notes"
 ])
-
 
 st.write("### Race Nutrition Plan (edit your Notes directly below)")
 edited_df = st.data_editor(
@@ -139,5 +146,6 @@ st.write("""
 - **Distance-based races:** May include a partial final lap to reach exact distance
 - **First lap:** No nutrition intake (assumed starting with full supplies)
 - **Sodium recommendation:** 300–600 mg per hour (you can adjust as needed)
+- **Calories recommendation:** around 300 kcal per hour (you can adjust as needed)
 - **Notes:** Add your planned food or drink for each lap directly in the table!
 """)
