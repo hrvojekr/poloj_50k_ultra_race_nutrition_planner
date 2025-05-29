@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
+st.set_page_config(layout="wide")
+
 st.title("Ultra Race Nutrition Planner")
 
 st.sidebar.header("User Inputs")
@@ -134,7 +136,7 @@ edited_df = st.data_editor(
         "Notes": st.column_config.TextColumn("Notes (what to eat/drink)")
     },
     num_rows="fixed",
-    use_container_width=True
+    use_container_width=True  # This ensures the table uses all available width
 )
 
 st.write(f"### Total Race Time: {timedelta(minutes=total_time)}")
