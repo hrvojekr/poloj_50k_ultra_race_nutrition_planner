@@ -71,12 +71,12 @@ elif discipline in ["6h", "12h"]:
         partial_distance = (remaining_time / pace_per_km)
         lap_distances_km.append(partial_distance)
 
-cumulative_fluid = 0
-cumulative_carbs = 0
-cumulative_sodium = 0
-cumulative_calories = 0
+cumulative_fluid = 0.0
+cumulative_carbs = 0.0
+cumulative_sodium = 0.0
+cumulative_calories = 0.0
 data = []
-total_distance = 0
+total_distance = 0.0
 
 for i, lap_dist in enumerate(lap_distances_km):
     lap_time = lap_dist * pace_per_km  
@@ -87,11 +87,11 @@ for i, lap_dist in enumerate(lap_distances_km):
     total_distance += lap_dist
     elapsed_time_str = str(elapsed_time).split(".")[0]
     
-    # Nutrition calculation (prorated for partial laps)
-    fluid_intake = fluid_per_hour_ml * (lap_time / 60) if i > 0 else 0
-    carbs_intake = carbs_per_hour_g * (lap_time / 60) if i > 0 else 0
-    sodium_intake = sodium_per_hour_mg * (lap_time / 60) if i > 0 else 0
-    calories_intake = calories_per_hour_kcal * (lap_time / 60) if i > 0 else 0
+    # Nutrition calculation (prorated for partial laps, NO rounding here)
+    fluid_intake = fluid_per_hour_ml * (lap_time / 60) if i > 0 else 0.0
+    carbs_intake = carbs_per_hour_g * (lap_time / 60) if i > 0 else 0.0
+    sodium_intake = sodium_per_hour_mg * (lap_time / 60) if i > 0 else 0.0
+    calories_intake = calories_per_hour_kcal * (lap_time / 60) if i > 0 else 0.0
     
     cumulative_fluid += fluid_intake
     cumulative_carbs += carbs_intake
@@ -103,14 +103,14 @@ for i, lap_dist in enumerate(lap_distances_km):
         round(total_distance, 2),
         elapsed_time_str,  
         lap_timestamp.strftime("%H:%M:%S"),
-        round(fluid_intake, 1),
-        round(cumulative_fluid, 1),
-        round(carbs_intake, 1),
-        round(cumulative_carbs, 1),
-        round(sodium_intake, 1),
-        round(cumulative_sodium, 1),
-        round(calories_intake, 1),
-        round(cumulative_calories, 1),
+        round(fluid_intake, 2),
+        round(cumulative_fluid, 2),
+        round(carbs_intake, 2),
+        round(cumulative_carbs, 2),
+        round(sodium_intake, 2),
+        round(cumulative_sodium, 2),
+        round(calories_intake, 2),
+        round(cumulative_calories, 2),
         ""  # Empty notes field for user input
     ])
 
